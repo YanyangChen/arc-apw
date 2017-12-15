@@ -80,7 +80,7 @@ public class APWc001 extends ACFaAppController {
             setKey("item_no");
             addRule(new ACFdSQLRule("item_no", RuleCondition.LIKE_, null, RuleCase.Insensitive)); //sec_id
             //addRule(new ACFdSQLRule("item_no", RuleCondition.EQ, null, RuleCase.Insensitive));//sub_sec_id
-            addRule(new ACFdSQLRule("item_desc", RuleCondition._LIKE_, null, RuleCase.Insensitive));
+            addRule(new ACFdSQLRule("item_description_1", RuleCondition._LIKE_, null, RuleCase.Insensitive));
             //addRule(new ACFdSQLRule("section_name", RuleCondition._LIKE_, null, RuleCase.Insensitive));
             //addRule(new ACFdSQLRule("report_caption", RuleCondition._LIKE_, null, RuleCase.Insensitive));
         }// ACF will forward the content to client and post to the grid which ID equals to “grid_browse”.

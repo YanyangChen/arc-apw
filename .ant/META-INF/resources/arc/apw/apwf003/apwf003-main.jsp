@@ -4,7 +4,7 @@
 <%@ taglib prefix="core" uri="http://java.sun.com/jsp/jstl/core" %>	
 <!-- PAGE CONTENT BEGINS -->
 <div class="col-md-12 nopadding">
-	<acf:Region id="reg_div_list" title="MODULE SEARCH" type="search">
+	<acf:Region id="reg_div_list" title="SEARCH" type="search">
 		<acf:RegionAction>
 			<a href="#" onClick="$(this).parents('.widget-box').pForm$clear();">Clear</a>
 		</acf:RegionAction>
@@ -47,7 +47,7 @@
 
 <div class="col-xs-12 nopadding">
 	<form id="frm_main" class="form-horizontal" data-role="form" >
-	<acf:Region id="reg_div_list" type="list" title="SELECTION LIST">
+	<acf:Region id="reg_div_list" type="list" title="PURCHASE ORDER LIST">
    		<acf:RegionAction>
 			<a href="javascript:$('#grid_browse').pGrid$prevRecord();">Previous</a>
 			&nbsp;
@@ -65,7 +65,7 @@
 	    </div>
 	</acf:Region>
 	
-	<acf:Region id="mod_main" title="MODULE MAINTENANCE" type="form">
+	<acf:Region id="mod_main" title="PURCHASE ORDER MAINTENANCE" type="form">
     	<div class="col-xs-12 form-padding oneline">
      		<label class="control-label col-md-2" for="purchase_order_no">P.O. No.:</label>
       		<div class="col-md-4">    
@@ -150,7 +150,7 @@
     	<div class="col-xs-12 form-padding oneline">
      		<label class="control-label col-md-2" for="department_reference_no">Dept.Ref. No.:</label>
       		<div class="col-md-4">    
-      			<acf:TextBox id="department_reference_no" name="department_reference_no" />
+      			<acf:TextBox id="department_reference_no" name="department_reference_no"  maxlength="10"/>
       		</div>
       		<div class="hidden">  
       			<acf:TextBox id="latest_receive_date" name="latest_receive_date" />
@@ -266,7 +266,7 @@
      		<label class="control-label col-md-2" for="cancel_indicator">Cancel:</label>
       		
   		
-      		<div class="col-md-10">
+<!--      		<div class="col-md-10">
 	      			<acf:ButtonGroup id="cancel_indicator" name="cancel_indicator" type="radio" checkMandatory="true">
 	      				<setting>
 			    			<option id="cancel_ind_y" value="y" label="Cancelled" />
@@ -275,9 +275,15 @@
 			    		
 			    		<acf:Bind on="click"><script></script></acf:Bind>
 	      			</acf:ButtonGroup>
-	      		</div>
-	      		</div>
-      			<div class="col-xs-12 form-padding oneline">
+	      		</div>   --> 
+	      		
+	      	<div class="col-md-1">
+      			
+      			<acf:CheckBox id="cancel_indicator" name="cancel_indicator" choice="Y,N"/>
+      		</div>
+      		
+	      	<!-- </div>
+      		 <div class="col-xs-12 form-padding oneline">  -->
       		<label class="control-label col-md-2" for="cancel_by">Cancelled By:</label>
       		<div class="col-md-2">         
       			<acf:TextBox id="canceled_by" name="cancel_by" maxlength="30" readonly="true" readonly="true"/>	
@@ -285,7 +291,7 @@
 			 <label class="control-label col-md-2" for="Cancel_date">Cancelled Date :</label>
       		<div class="col-md-2">         
       			
-      			<acf:DateTime id="cancel_date" name="cancel_date" checkMandatory="false" readonly="true" displayformat="YYYY/MM/DD"/>
+      			<acf:DateTimePicker id="cancel_date" name="cancel_date" checkMandatory="false" readonly="true" displayformat="YYYY/MM/DD"   useDefValIfEmpty="true"/>
 			   			<acf:Bind on="validate"><script>
 			   				//var ts = $(this).getValue();
 			   				//if (ts != "" && ts > 1420113600000) { // 2015/01/01 20:00
@@ -308,7 +314,7 @@
       		</div>
       		<label class="control-label col-md-2" for="printed_at">Last Printed Date:</label>
       		<div class="col-md-2">         
-      			<acf:DateTime id="printed_at" name="printed_at"  checkMandatory="false" displayformat="YYYY/MM/DD" readonly="true"/>
+      			<acf:DateTimePicker id="printed_at" name="printed_at"  checkMandatory="false" displayformat="YYYY/MM/DD" readonly="true"   useDefValIfEmpty="true"/>
       			<acf:Bind on="validate"><script>
 			   				//var ts = $(this).getValue();
 			   				//if (ts != "" && ts > 1420113600000) { // 2015/01/01 20:00
@@ -679,8 +685,8 @@ $(document).on('new', function() {
 	$("#frm_main #latest_receive_date").setValue(0);
 	$("#frm_main #cancel_indicator").setValue('n');
 	$("#frm_main #no_of_times_printed").disable();
-	$("#frm_main #cancel_date").setValue(moment("2017-01-01"));
-	$("#frm_main #printed_at").setValue(moment("2017-01-01"));
+	$("#frm_main #cancel_date").setValue(moment("1900-01-01"));
+	$("#frm_main #printed_at").setValue(moment("1900-01-01"));
 	$("#frm_main #Other").enable();
 	$("#frm_main #TKO").enable();
 			//$.ajax({//generate new pruchase order number

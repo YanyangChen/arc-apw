@@ -7,7 +7,7 @@
 %>
 
 <div class="col-xs-12 nopadding">
-	<acf:Region id="reg_func_search" type="search" title="SECTION SEARCH">
+	<acf:Region id="reg_func_search" type="search" title="SEARCH">
 		<acf:RegionAction>
 			<a href="#" onClick="$(this).parents('.widget-box').pForm$clear();">Clear</a>
 		</acf:RegionAction>
@@ -51,7 +51,7 @@
 	</acf:Region>
 	
 	<form id="frm_main" class="form-horizontal" data-role="form" >
-		<acf:Region id="reg_div_list" type="list" title="SEARCH LIST">
+		<acf:Region id="reg_div_list" type="list" title="PURCHASE ORDER LIST">
    		<acf:RegionAction>
 			<a href="javascript:$('#grid_browse').pGrid$prevRecord();">Previous</a>
 			&nbsp;
@@ -68,7 +68,7 @@
 	    </div>
 	</acf:Region>
 	
-		<acf:Region id="reg_func_main" type="form" title="MATERIAL MAINTENANCE">
+		<acf:Region id="reg_func_main" type="form" title="MATERIAL RECEIPT MAINTENANCE">
     	<div class="col-xs-12 form-padding">
      		<label class="control-label col-md-2" for="purchase_order_no">Purchase Order No.:</label>
       		<div class="col-md-2">
@@ -270,7 +270,7 @@
 		
 	</acf:Region>
 	
-	<acf:Region id="receipt_list" type="list" title="SECTION LIST">
+	<acf:Region id="receipt_list" type="list" title="ITEM LIST">
    		<acf:RegionAction>
 			<a href="javascript:$('#grid_browse').pGrid$prevRecord();">Previous</a>
 			&nbsp;
@@ -517,8 +517,8 @@ $(document).on('view', function() {
 
 $(document).on('amend', function() {
 	//$("#frm_main #printed_at").setValue(2017-02-20);
-	$("#frm_main #Other").enable();
-	$("#frm_main #TKO").enable();
+	$("#frm_main #Other").disable();
+	$("#frm_main #TKO").disable();
 });
 
 </script>

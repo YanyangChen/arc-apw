@@ -57,8 +57,42 @@
     	<div class="col-xs-12 form-padding oneline">
      		<label class="control-label col-md-2" for="item_no">Item No.:</label>
       		<div class="col-md-1">    
-      			<acf:TextBox id="item_no" name="item_no" maxlength="7" checkMandatory="true"/>
-      			     
+      			<acf:TextBox id="item_no" name="item_no" maxlength="7" checkMandatory="true">
+      			     <acf:Bind on="change"><script>
+	 					item_no = $("#frm_main #item_no").getValue(); //this bloack is the same as onLoadSucess except $this value
+   						
+   						
+   						
+   						if (item_no == ""){
+   							//$("#frm_main #supplier_desc").setValue("");	
+   						}
+   						else {	
+   						//if($("#frm_main #reference_unit_cost").getValue() != 0){				
+	   						$.ajax({
+								headers: {
+									'Accept'       : 'application/json',
+									'Content-Type' : 'application/json; charset=utf-8'
+								},
+								async  : false,
+								type   : "POST",
+								url    : "${ctx}/arc/apw/apwf001/apwf001-get-reference-price.ajax",
+								data   : JSON.stringify({
+									'item_no'	: item_no,
+								}),
+								success: function(data) {
+									if (data.unit_cost != null) {
+										$("#frm_main #reference_unit_cost").setValue(data.unit_cost);
+										if (data.unit_cost == '') $("#frm_main #reference_unit_cost").setValue(0.00);
+									}
+									else {
+										//$("#frm_main #supplier_desc").setValue("");
+									}
+								}
+							});
+   						}
+   						//}
+	 				</script></acf:Bind>
+	 				</acf:TextBox>
       		</div>
     	
     	</div> 
@@ -129,40 +163,7 @@
      		<label class="control-label col-md-2" for="reference_unit_cost">Reference Unit Cost:</label>
       		<div class="col-md-2">    
       			<acf:TextBox id="reference_unit_cost" name="reference_unit_cost" readonly="true">
-      			<acf:Bind on="change"><script>
-	 					item_no = $("#frm_main #item_no").getValue(); //this bloack is the same as onLoadSucess except $this value
-   						
-   						
-   						
-   						if (item_no == ""){
-   							//$("#frm_main #supplier_desc").setValue("");	
-   						}
-   						else {	
-   						//if($("#frm_main #reference_unit_cost").getValue() != 0){				
-	   						$.ajax({
-								headers: {
-									'Accept'       : 'application/json',
-									'Content-Type' : 'application/json; charset=utf-8'
-								},
-								async  : false,
-								type   : "POST",
-								url    : "${ctx}/arc/apw/apwf001/apwf001-get-reference-price.ajax",
-								data   : JSON.stringify({
-									'item_no'	: item_no,
-								}),
-								success: function(data) {
-									if (data.unit_cost != null) {
-										$("#frm_main #reference_unit_cost").setValue(data.unit_cost);
-										if (data.unit_cost == '') $("#frm_main #reference_unit_cost").setValue(0.00);
-									}
-									else {
-										//$("#frm_main #supplier_desc").setValue("");
-									}
-								}
-							});
-   						}
-   						//}
-	 				</script></acf:Bind>
+      			
       			     </acf:TextBox>
       		</div>
     	</div> 

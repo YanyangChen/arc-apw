@@ -153,6 +153,7 @@
 								success: function(data) {
 									if (data.unit_cost != null) {
 										$("#frm_main #reference_unit_cost").setValue(data.unit_cost);
+										if (data.unit_cost == '') $("#frm_main #reference_unit_cost").setValue(0.00);
 									}
 									else {
 										//$("#frm_main #supplier_desc").setValue("");

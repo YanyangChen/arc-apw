@@ -40,6 +40,7 @@ import arc.apf.Model.ARCmItemInventory;
 import arc.apf.Service.ARCsItemMaster;
 import arc.apf.Service.ARCsLocation;
 import arc.apf.Service.ARCsModel;
+import arc.apw.Static.APWtGlobal;
 import arc.apw.Static.APWtMapping;
 
 @Controller
@@ -70,7 +71,7 @@ public class APWc006 extends ACFaAppController {
             super();
             setCustomSQL("select * from (select A.*, A.adjustment_date as adjustment_datee, im.item_description_1 as item_desc " +
                     "from arc_item_adjustment_history A, arc_item_master im "
-                    + "where A.item_no = im.item_no)");
+                    + "where A.item_no = im.item_no and section_id = '"+APWtGlobal.APW_SECTION_ID+"')");
             setKey("adjustment_date", "item_no");
             
             addRule(new ACFdSQLRule("item_no", RuleCondition._LIKE_, null, RuleCase.Insensitive));
