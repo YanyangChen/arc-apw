@@ -634,11 +634,11 @@ $(document).on('amend', function() {
 	//get item_no from records
 	
 	
-	if($("#mod_main #cancel_indicator").getValue() == "y")
+	if($("#mod_main #cancel_indicator").getValue() == "Y")
 	{
 	$("#mod_main #cancel_date").disable();	
 	}
-	else if ($("#mod_main #cancel_indicator").getValue() == "n")
+	else if ($("#mod_main #cancel_indicator").getValue() != "Y")
 	{
 	$("#mod_main #cancel_date").enable();	
 	}
@@ -656,10 +656,10 @@ $(document).on('amend', function() {
 										'purchase_order_no'	: purchase_order_no,
 									}),
 									success: function(data) {
-									var pono = data.inv;
+									var total_received = data.inv;
 									console.log(data.inv);
 									console.log(purchase_order_no);
-										if (pono == purchase_order_no) {
+										if (total_received > 0) {
 										console.log(123);
 											$("#frm_main #cancel_indicator").disable();
 										}
@@ -726,7 +726,9 @@ $(document).on('view', function() {
 $(document).on("clone", function() {
 
 $("#grid_item").pGrid$copyRecord();
-
+$("#frm_main #printed_by").setValue("");
+$("#frm_main #printed_at").setValue("");
+$("#frm_main #no_of_times_printed").setValue(0);
 });
 
 function calculatePaymentAmount(){

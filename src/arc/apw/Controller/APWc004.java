@@ -2,6 +2,7 @@ package arc.apw.Controller;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
 
 //import cal.aes.Model.AESmEventPlan;
 import acf.acf.Abstract.ACFaAppController;
@@ -32,6 +35,7 @@ import acf.acf.Interface.ACFiCallback;
 import acf.acf.Interface.ACFiSQLAssWriteInterface;
 import acf.acf.Model.ACFmGridResult;
 import acf.acf.Model.ACFmUser;
+import acf.acf.Static.ACFtUtility;
 import arc.apf.Dao.ARCoItemInventory;
 import arc.apf.Dao.ARCoPOHeader;
 import arc.apf.Model.ARCmIndirectBudget;
@@ -191,8 +195,47 @@ public class APWc004 extends ACFaAppController {
                 ass.setAfterExecute(new ACFiCallback() {
                     @Override
                     public void callback() throws Exception {
-                        if (Inventoryamendments != null)
-                            ItemInventoryDao.saveItems(Inventoryamendments);
+                    	List<ARCmItemInventory>Inventoryamendments2 = new ArrayList<ARCmItemInventory>();
+                    	                     	for ( ARCmItemInventory each : Inventoryamendments)
+                    	                     	{
+                    	                     		Inventoryamendments2.add(each);
+                    	                     	}
+                    	                         if (Inventoryamendments2 != null)
+                    	                         	
+                    	 //                            ItemInventoryDao.saveItems(Inventoryamendments);
+                    	                         	ItemInventoryDao.saveItems(Inventoryamendments2, new ACFiSQLAssWriteInterface<ARCmItemInventory>(){
+                    	 
+                    	 								@Override
+                    	 								public boolean insert(
+                    	 										ARCmItemInventory newItem,
+                    	 										ACFdSQLAssInsert ass) throws Exception {
+                    	 									newItem.purchase_order_date = ACFtUtility.now();
+                    	  									newItem.receive_date = ACFtUtility.now();
+                    	 								System.out.println("testing ********************* newItem.receive_date **** i ***** insert" +  newItem.receive_date);
+                    	 									
+                   	  									// TODO Auto-generated method stub
+                    	 									return false;
+                    	 								}
+                    	 
+                    	 								@Override
+                    	 								public boolean update(
+                    	 										ARCmItemInventory oldItem,
+                    	 										ARCmItemInventory newItem,
+                    	 										ACFdSQLAssUpdate ass) throws Exception {
+                    	 									newItem.purchase_order_date = ACFtUtility.now();
+                    	 									newItem.receive_date = ACFtUtility.now();
+                    	 									System.out.println("testing ********************* newItem.receive_date **** i ***** update" + newItem.receive_date);
+                    	 									// TODO Auto-generated method stub
+                    	 									return false;
+                    	 								}
+                    	 
+                    	 								@Override
+                    	 								public boolean delete(
+                    	 									ARCmItemInventory oldItem,
+                    	 									ACFdSQLAssDelete ass) throws Exception {
+                    										// TODO Auto-generated method stub
+                    	 									return false;
+                    	 								}});
                         
                       
                     }

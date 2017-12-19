@@ -164,7 +164,7 @@ public class APWc extends ACFaAppController {
        // getResponseParameters().put("programme",        progService.unfillItem(progService.getActTempProgramme(param.get("prog_no", String.class))));
        // getResponseParameters().put("producer_code",    prodMemberService.getProducerListValuePairs(param.get("prog_no", String.class)));
        // getResponseParameters().put("aa_staff",         prodMemberService.getStaffNameByProgNo((param.get("prog_no", String.class)), "AA"));
-        getResponseParameters().put("inv",         InventoryService.getInventory((param.get("purchase_order_no", String.class))));
+        getResponseParameters().put("inv",         InventoryService.getInventory_receives((param.get("purchase_order_no", String.class))));
       //getResponseParameters().put("ep",               prodMemberService.getStaffByProgNo(param.get("prog_no", String.class), "EP"));
         return getResponseParameters();
     }

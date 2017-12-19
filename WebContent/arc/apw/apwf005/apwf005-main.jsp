@@ -15,13 +15,30 @@
 	    	<div class="form-group">
 	      		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-3">
 	      			<label for=consumption_form_no style="display:block">Consumption Form No.</label>
-	      			<acf:TextBox id="s_consumption_form_no" name="consumption_form_no" editable="true" maxlength="60"/>  
+	      			<acf:TextBox id="s_consumption_form_no" name="consumption_form_no" editable="true" maxlength="8"/>  
 	      		</div>
 	      		
 	    	
 	      		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-3">
 	      			<label for=programme_no style="display:block">Programme No.</label>
-	      			<acf:TextBox id="s_programme_no" name="programme_no" editable="true" maxlength="60"/>  
+	      			<acf:TextBox id="s_programme_no" name="programme_no" button="fa-search" maxlength="9" allowKey="[tT0-9]" forceCase="upper" format="(T[0-9]{8}|[0-9]{1,9})"> 
+	      		<acf:Bind target="button" on="click"><script>
+	      					programme_no = null;
+		   		    		Dialog.create()
+								.setCaption("Search")
+								.setWidth(1000)
+								.addDismissButton("OK", function(){
+									if ($.type(programme_no) == "string"){
+										$("#frm_search #s_programme_no").setValue(programme_no);
+										programme_no = "";
+									}
+								})
+								.setResultCallback(function(result) {
+									programme_no = result.programme_no;
+								})
+								.showUrl("../../apf/apff011/apff011-search-arc-prog");
+	   					</script></acf:Bind>
+	   					</acf:TextBox> 
 	      		</div>
 	      		
 	      		
@@ -161,10 +178,24 @@
     	<div class="col-xs-12 form-padding">
      		<label class="control-label col-md-2" for="programme_no">Programme No.:</label>
       		<div class="col-md-3">
-      			<acf:ComboBox id="programme_no" name="programme_no" maxlength="9" checkMandatory="true">
-      			<acf:Bind on="initData"><script>
-	 					$(this).acfComboBox("init", ${programmeno} );
-	 				</script></acf:Bind>
+      			<acf:TextBox id="programme_no" name="programme_no" button="fa-search" maxlength="9" allowKey="[tT0-9]" forceCase="upper" format="(T[0-9]{8}|[0-9]{1,9})"> 
+	      		<acf:Bind target="button" on="click"><script>
+	      					programme_no = null;
+		   		    		Dialog.create()
+								.setCaption("Search")
+								.setWidth(1000)
+								.addDismissButton("OK", function(){
+									if ($.type(programme_no) == "string"){
+										$("#frm_main #programme_no").setValue(programme_no);
+										programme_no = "";
+									}
+								})
+								.setResultCallback(function(result) {
+									programme_no = result.programme_no;
+								})
+								.showUrl("../../apf/apff011/apff011-search-arc-prog");
+	   					</script></acf:Bind>
+	   					
       			<acf:Bind on="change"><script>
 				var programme_no = $(this).getValue();
 				
@@ -202,7 +233,7 @@
 							//}
 				</script>
 				</acf:Bind>
-				</acf:ComboBox>
+				</acf:TextBox>
       				
       			   
         	</div>
@@ -564,16 +595,8 @@
 				</acf:Bind>
 				</acf:Column>
 				<acf:Column name="account_allocation" caption="A/C Alloc." width="100" editable="true" type="select" maxlength="2" initData="${ACselect}" checkMandatory="true"></acf:Column> 
-				<acf:Column name="unit_cost" caption="Unit Cost" width="100" editable="true" checkMandatory="true">
-				<acf:Bind on="validate"><script>
-				function validation (newValue, oldValue, newData, oldData, id) {
-				var unitcost = $("#material_browse").getRowData(id).unit_cost;
-				var ttl = unitcost;
-				$("#material_browse").setRowData(id, {other_material_amount:ttl});
-				}
-				</script></acf:Bind>
-				</acf:Column>
-				<acf:Column name="other_material_amount" caption="Amount" readonly="true" maxlength="12" width="100" align="right" editable="false"></acf:Column>
+				<acf:Column name="unit_cost" caption="Unit Cost" width="100" editable="false" checkMandatory="true"></acf:Column>
+				<acf:Column name="other_material_amount" caption="Amount" maxlength="12" width="100" align="right" editable="true"></acf:Column>
 				<acf:Column name="consumption_form_no" hidden="true" caption="Amount1" width="100"></acf:Column>
 				<acf:Column name="programme_no" hidden="true" caption="Amount2" width="100"></acf:Column>
 				<acf:Column name="input_date" hidden="true" caption="Amount3" width="100"></acf:Column>
@@ -607,12 +630,15 @@
 								success: function(data) {
 									//console.log(data.item);
 									//console.log(data.item[0].un_it);
-									if (data.item != null) {
-										//$("#frm_main #supplier_desc").setValue(data.sup_desc);
-										
-										$("#labour_browse").setRowData(id, {labour_type_description: data.item[0].labour_type_description, hourly_rate: data.item[0].hourly_rate});
-										
-									}
+									if (data.item.length != 0) {
+  										//$("#frm_main #supplier_desc").setValue(data.sup_desc);
+ 									
+ 									console.log(data.item[0].labour_type_description);
+ 									if (data.item[0].labour_type_description != '') {
+  										$("#labour_browse").setRowData(id, {labour_type_description: data.item[0].labour_type_description, hourly_rate: data.item[0].hourly_rate});
+ 										
+ 										}
+  									}
 									else {
 										//$("#frm_main #supplier_desc").setValue("");
 									}
@@ -783,9 +809,10 @@ $("#frm_main #cancel_indicator").disable();
 }),
 
 $(document).on('clone', function() {
-$('#item_browse').pGrid$clear();
-$('#labour_browse').pGrid$clear();
-$('#material_browse').pGrid$clear();
+
+$('#item_browse').pGrid$copyRecord();
+$('#labour_browse').pGrid$copyRecord();
+$('#material_browse').pGrid$copyRecord();
 });
 
 $("#frm_main").pForm$setRelatedComboBox(${businessDepartment}, [$("#frm_main #business_platform"), $("#frm_main #department")]);

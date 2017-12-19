@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
 //import cal.apm.Controller.APMc101.SearchProdMember;
 //import cal.exe.Model.EXEmFunction;
 import acf.acf.Abstract.ACFaAppController;
@@ -338,7 +339,27 @@ public class APWc003 extends ACFaAppController {
                 @Override
                 public boolean update(ARCmPOHeader oldItem, ARCmPOHeader newItem, ACFdSQLAssUpdate ass) throws Exception {
                 	// validate(newItem);
-                	
+                	System.out.println("testing****************************************amendments.get(0).purchase_order_no" + amendments.get(0).purchase_order_no);
+               	 ACFdSQLAssSelect select = new ACFdSQLAssSelect();
+                    select.setCustomSQL("select * from arc_item_inventory where purchase_order_no = '%s'", amendments.get(0).purchase_order_no);
+                    select.setKey("purchase_order_no");
+//                    select.wheres.and("purchase_order_no");
+                    List<ACFgRawModel> inv_result = select.executeQuery(getConnection("ARCDB"));
+                    //if iterate all results and the received items are all 0
+                    int inventory_received = 0;
+                    for (ACFgRawModel each : inv_result){
+                   	 if(each.getBigDecimal("received_quantity").intValue() !=0){
+                   		 inventory_received += each.getBigDecimal("received_quantity").intValue();
+                   	 }
+                    }
+                    System.out.println("inventory_received are ********************" + inventory_received);
+               	if (oldItem.cancel_indicator.equals("N") && newItem.cancel_indicator.equals("Y") && inventory_received != 0)
+	               	 {
+	               		 ass.columns.put("cancel_by", SecurityService.getCurrentUser().user_id);
+	               		 ass.columns.put("cancel_date",  ACFtUtility.now());
+	               		System.out.println("test**************canceled_by and canceled_date scripts entered");
+	               		
+	               	 }
                      ass.setAfterExecute(new ACFiCallback() {
                         // @SuppressWarnings("null")
 						@Override
@@ -401,7 +422,7 @@ public class APWc003 extends ACFaAppController {
 								                        	   ARCmItemInventory us =new ARCmItemInventory();
 								                         	us.item_no = newItem.item_no;
 								                         	us.purchase_order_no = newItem.purchase_order_no;
-								                         	us.purchase_order_date = uso.purchase_order_date;
+								                         	us.purchase_order_date = new Timestamp(System.currentTimeMillis());
 								                         	us.order_quantity = newItem.order_quantity;
 								                         	us.received_quantity = uso.received_quantity;
 								                         	us.current_received_quantity = uso.current_received_quantity;

@@ -4,10 +4,15 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+
+
+
 
 
 //The org.springframework.beans and org.springframework.context packages are the
@@ -106,6 +111,13 @@ public class APWc005 extends ACFaAppController {
 			
 			return i.purchase_order_no.compareTo(j.purchase_order_no);
 		}};
+		Comparator<ARCmItemInventory> clpo = new Comparator<ARCmItemInventory>(){
+			
+			@Override
+			public int compare(ARCmItemInventory i,ARCmItemInventory j) {
+				
+				return j.purchase_order_no.compareTo(i.purchase_order_no);
+			}};
    // @ACFgAuditKey String other_material;
     //@ACFgAuditKey BigDecimal unit_cost;
     
@@ -154,7 +166,7 @@ public class APWc005 extends ACFaAppController {
         model.addAttribute("locationcode", LocationService.getLocationCode());
         model.addAttribute("programmeno", ProgrammeMasterService.getProgNamePairs());
         model.addAttribute("groupno", GroupService.getGroupNamePairs());
-        model.addAttribute("LabourTypeselect", LabourTypeService.getAllEffLabourType());
+        model.addAttribute("LabourTypeselect", LabourTypeService.getAllEffLabourType_4_woodshop());
         model.addAttribute("businessDepartment", BusinessPlatformService.getAllBusinessDepartmentValue());
         model.addAttribute("BusinessPlatform", BusinessPlatformService.getBBusinessPlatform());
         model.addAttribute("Department", BusinessPlatformService.getBDepartment());
@@ -255,7 +267,7 @@ public class APWc005 extends ACFaAppController {
             
             //interface for the related functions
             @Override
-            public boolean insert(ARCmWPConsumptionHeader newItem, ACFdSQLAssInsert ass) throws Exception {
+            public boolean insert(final ARCmWPConsumptionHeader newItem, ACFdSQLAssInsert ass) throws Exception {
                 //ass.columns.put("allow_print", 1); //without the allow_print column, the whole sql won't work
                 ass.setAfterExecute(new ACFiCallback() {
                     @Override
@@ -304,19 +316,50 @@ public class APWc005 extends ACFaAppController {
  											do // consumption from inventory
 											{	
  												Invitems = APWc006.filter(Invitems);
+ 												ARCmWPConsumptionItem consitems = new ARCmWPConsumptionItem();
+ 												consitems.account_allocation = newItem.account_allocation;
+ 												consitems.consumption_form_no = newItem.consumption_form_no;
+// 												consitems.consumption_quantity = newItem.consumption_quantity;
+ 												consitems.input_date = newItem.input_date;
+ 												consitems.item_no = newItem.item_no;
+ 												consitems.programme_no = newItem.programme_no;
+ 												consitems.purchase_order_no = newItem.purchase_order_no;
+ 												consitems.re_used_indicator = newItem.re_used_indicator;
+ 												consitems.unit_cost = newItem.unit_cost;
+ 												consitems.created_at = newItem.created_at;
+ 												consitems.created_by = newItem.created_by;
+ 												consitems.modified_at = newItem.modified_at;
+ 												consitems.modified_by = newItem.modified_by;
 												ARCmItemInventory mininv = Collections.min(Invitems,cii);
  												
  												if(cq <=APWc006.get_remaining(mininv))
  												{
- 												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);
- 						            			cq = 0;
- 						            			ItemInventoryDao.updateItem(mininv);
+ 													ass.columns.put("consumption_quantity", new BigDecimal(cq));
+ 													
+ 	 												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);
+ 	 						            			cq = 0;
+ 	 						            			ItemInventoryDao.updateItem(mininv);
  												}
  												
  												if(cq > APWc006.get_remaining(mininv))
  						            			{
+ 													Integer remain = APWc006.get_remaining(mininv);
+ 	 												consitems.consumption_quantity = new BigDecimal(remain.toString());
+ 													
+ 													
  						            			//mininv.adjusted_quantity = new BigDecimal(0);
- 						            			cq = cq - APWc006.get_remaining(mininv);
+ 													
+ 	 												cq = cq - remain;
+ 	 												
+ 	 												consitems.unit_cost = mininv.unit_cost;
+ 	 						                		consitems.purchase_order_no = mininv.purchase_order_no;
+ 	 						                		
+ 	 						                		
+ 	 						                		
+ 	 						                		//update inventory record in loop
+ 	 						            			
+ 	 						            			
+ 	 						            			WPconsumptionItemDao.insertItem(consitems);
  						                			
  						                		mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + APWc006.get_remaining(mininv)); //set remaining to zero
  						                			
@@ -372,10 +415,28 @@ public class APWc005 extends ACFaAppController {
  											do // consumption from inventory
 											{	
  												Invitems = APWc006.filter(Invitems);
+ 												
+ 												ARCmWPConsumptionItem consitems = new ARCmWPConsumptionItem();
+ 												consitems.account_allocation = newItem.account_allocation;
+ 												consitems.consumption_form_no = newItem.consumption_form_no;
+// 												consitems.consumption_quantity = newItem.consumption_quantity;
+ 												consitems.input_date = newItem.input_date;
+ 												consitems.item_no = newItem.item_no;
+ 												consitems.programme_no = newItem.programme_no;
+ 												consitems.purchase_order_no = newItem.purchase_order_no;
+ 												consitems.re_used_indicator = newItem.re_used_indicator;
+ 												consitems.unit_cost = newItem.unit_cost;
+ 												consitems.created_at = newItem.created_at;
+ 												consitems.created_by = newItem.created_by;
+ 												consitems.modified_at = newItem.modified_at;
+ 												consitems.modified_by = newItem.modified_by;
+ 												
 												ARCmItemInventory mininv = Collections.min(Invitems,cii);
  												
  												if(cq <=APWc006.get_remaining(mininv))
  												{
+ 													ass.columns.put("consumption_quantity", new BigDecimal(cq));
+ 													
  												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);
  						            			cq = 0;
  						            			ItemInventoryDao.updateItem(mininv);
@@ -383,8 +444,24 @@ public class APWc005 extends ACFaAppController {
  												
  												if(cq > APWc006.get_remaining(mininv))
  						            			{
+ 													
+ 													Integer remain = APWc006.get_remaining(mininv);
+ 	 												consitems.consumption_quantity = new BigDecimal(remain.toString());
+ 													
+ 													
  						            			//mininv.adjusted_quantity = new BigDecimal(0);
- 						            			cq = cq - APWc006.get_remaining(mininv);
+ 													
+ 	 												cq = cq - remain;
+ 	 												
+ 	 												consitems.unit_cost = mininv.unit_cost;
+ 	 						                		consitems.purchase_order_no = mininv.purchase_order_no;
+ 	 						                		
+ 	 						                		
+ 	 						                		
+ 	 						                		//update inventory record in loop
+ 	 						            			
+ 	 						            			
+ 	 						            			WPconsumptionItemDao.insertItem(consitems);
  						                			
  						                		mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + APWc006.get_remaining(mininv)); //set remaining to zero
  						                			
@@ -410,10 +487,30 @@ public class APWc005 extends ACFaAppController {
 										}
                             	
                             		});
-                       if (Materialamendments != null)
-                            OtherMaterialConsumptionDao.saveItems(Materialamendments);
-                        if (Labouramendments != null)
-                            WPLabourConsumptionDao.saveItems(Labouramendments);
+                        String global_cfn =  newItem.consumption_form_no;
+                        List<ARCmWPOtherMaterialConsumption> Materialamendments2 = new ArrayList<ARCmWPOtherMaterialConsumption>();
+                        for (ARCmWPOtherMaterialConsumption each : Materialamendments)
+                        {
+                     	   each.consumption_form_no = global_cfn;
+                     	   Materialamendments2.add(each);
+                     	   
+                        }
+                        if (Materialamendments2.size() != 0)
+                             OtherMaterialConsumptionDao.saveItems(Materialamendments2);
+                        
+                        
+                        global_cfn =  newItem.consumption_form_no;
+                        List<ARCmWPLabourConsumption> Labouramendments2 = new ArrayList<ARCmWPLabourConsumption>();
+                        for (ARCmWPLabourConsumption each : Labouramendments)
+                        {
+                     	   each.consumption_form_no = global_cfn;
+                     	   Labouramendments2.add(each);
+                     	   
+                        }
+                         if (Labouramendments2.size() != 0)
+                             WPLabourConsumptionDao.saveItems(Labouramendments2);
+                  
+                     
                  
                     }
                 });
@@ -609,10 +706,9 @@ public class APWc005 extends ACFaAppController {
 											{
 												//throw exceptionService.error("APW105E");
  												List<ARCmItemInventory> ls = ItemInventoryDao.selectItems(newItem.item_no);
- 												List<ARCmItemInventory> Invitems = APWc006.filter(ls);
-												ARCmItemInventory mininv = Collections.min(Invitems,cii);
-												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);//add back the error consumed difference
-												ItemInventoryDao.updateItem(mininv);
+ 												ARCmItemInventory maxpo = Collections.min(ls,clpo); //get the latest PO object
+												maxpo.consumed_quantity = new BigDecimal(maxpo.consumed_quantity.intValue() + cq);//add up the regret
+												ItemInventoryDao.updateItem(maxpo);
 											}
  											
  											//consumption quantity not equals to 0
@@ -682,7 +778,37 @@ public class APWc005 extends ACFaAppController {
 										@Override
 										public boolean delete(ARCmWPConsumptionItem oldItem,ACFdSQLAssDelete ass)throws Exception {
 											// TODO Auto-generated method stub
+											int cq;
+											cq = oldItem.consumption_quantity.intValue();
 											
+										
+											ARCmItemInventory left = ItemInventoryDao.selectItem(oldItem.item_no, oldItem.purchase_order_no);
+											
+											
+											//if related item po in inventory still have remains
+											
+												//add to the item po
+											
+											if (cq > 0  && (oldItem.re_used_indicator.equals("0")) &&  APWc006.get_remaining(left) != 0 )
+											{
+												left.consumed_quantity = new BigDecimal(left.consumed_quantity.intValue() + cq);//add up the regret
+												ItemInventoryDao.updateItem(left);
+												
+											}
+											
+											//if related item po in inventory has been consumed
+											
+												//then add to the latest po
+											if (cq > 0  && (oldItem.re_used_indicator.equals("0")) &&  APWc006.get_remaining(left) == 0 )
+											{
+												
+ 												List<ARCmItemInventory> ls = ItemInventoryDao.selectItems(oldItem.item_no);
+ 												ARCmItemInventory maxpo = Collections.min(ls,clpo); //get the latest PO object
+												maxpo.consumed_quantity = new BigDecimal(maxpo.consumed_quantity.intValue() + cq);//add up the regret
+												ItemInventoryDao.updateItem(maxpo);
+//												}
+												
+											}
 											return false;
 										}
                             	
