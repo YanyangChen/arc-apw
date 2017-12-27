@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+
+
 //import cal.aes.Model.AESmEventPlan;
 import acf.acf.Abstract.ACFaAppController;
 import acf.acf.Database.ACFdSQLAssDelete;
@@ -37,10 +41,13 @@ import acf.acf.Model.ACFmGridResult;
 import acf.acf.Model.ACFmUser;
 import acf.acf.Static.ACFtUtility;
 import arc.apf.Dao.ARCoItemInventory;
+import arc.apf.Dao.ARCoItemMaster;
+import arc.apf.Dao.ARCoItemReceiveHistory;
 import arc.apf.Dao.ARCoPOHeader;
 import arc.apf.Model.ARCmIndirectBudget;
 import arc.apf.Model.ARCmItemInventory;
 import arc.apf.Model.ARCmItemMaster;
+import arc.apf.Model.ARCmItemReceiveHistory;
 import arc.apf.Model.ARCmPOHeader;
 import arc.apf.Service.ARCsLocation;
 import arc.apf.Service.ARCsModel;
@@ -60,6 +67,8 @@ public class APWc004 extends ACFaAppController {
     @Autowired ARCoItemInventory ItemInventoryDao;
     @Autowired ARCsPoHeader PoHeaderService;
     @Autowired ARCsLocation LocationService;
+    @Autowired ARCoItemMaster ItemMasterDao;
+    @Autowired ARCoItemReceiveHistory ItemReceiveHistoryDao;
     //@Autowired APFsFuncGp funcGpService; //click the object and click import
     @ACFgAuditKey String purchase_order_no;
     @ACFgAuditKey String item_no;
@@ -181,7 +190,7 @@ public class APWc004 extends ACFaAppController {
     @ResponseBody
     public ACFgResponseParameters save(@RequestBody ACFgRequestParameters param) throws Exception { //function in the upper right "save" button
       //the controller obtains the changes of form data 
-        List<ARCmPOHeader> amendments = param.getList("form", ARCmPOHeader.class);
+        final List<ARCmPOHeader> amendments = param.getList("form", ARCmPOHeader.class);
         final List<ARCmItemInventory> Inventoryamendments = param.getList("Receipt", ARCmItemInventory.class);
         System.out.println(Inventoryamendments);
         //and call DAO to save the changes
@@ -213,6 +222,14 @@ public class APWc004 extends ACFaAppController {
                     	  									newItem.receive_date = ACFtUtility.now();
                     	 								System.out.println("testing ********************* newItem.receive_date **** i ***** insert" +  newItem.receive_date);
                     	 									
+                    	 								//create history records to receive_history table
+                     									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
+                    									reviHist.item_no = newItem.item_no;
+                    									reviHist.purchase_order_no = newItem.purchase_order_no;
+                    									reviHist.received_date = amendments.get(0).latest_receive_date;
+                    									reviHist.received_quantity = newItem.received_quantity;
+                    									reviHist.back_order_quantity = newItem.back_order_quantity;
+                    									ItemReceiveHistoryDao.insertItem(reviHist);
                    	  									// TODO Auto-generated method stub
                     	 									return false;
                     	 								}
@@ -226,6 +243,14 @@ public class APWc004 extends ACFaAppController {
                     	 									newItem.receive_date = ACFtUtility.now();
                     	 									System.out.println("testing ********************* newItem.receive_date **** i ***** update" + newItem.receive_date);
                     	 									// TODO Auto-generated method stub
+                    	 									//update history records to receive_history table
+                    	 									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
+                    										reviHist.item_no = newItem.item_no;
+                    										reviHist.purchase_order_no = newItem.purchase_order_no;
+                    										reviHist.received_date = amendments.get(0).latest_receive_date;
+                    										reviHist.received_quantity = newItem.received_quantity;
+                    										reviHist.back_order_quantity = newItem.back_order_quantity;
+                    										ItemReceiveHistoryDao.updateItem(reviHist);
                     	 									return false;
                     	 								}
                     	 
@@ -249,7 +274,58 @@ public class APWc004 extends ACFaAppController {
                     @Override
                     public void callback() throws Exception {
                         if (Inventoryamendments != null)
-                            ItemInventoryDao.saveItems(Inventoryamendments);
+                        	ItemInventoryDao.saveItems(Inventoryamendments, new ACFiSQLAssWriteInterface<ARCmItemInventory>(){
+
+ 								@Override
+ 								public boolean insert(
+										ARCmItemInventory newItem,
+										ACFdSQLAssInsert ass) throws Exception {
+ 									ass.columns.put("purchase_order_date", amendments.get(0).purchase_order_date);
+									ass.columns.put("receive_date", amendments.get(0).latest_receive_date);
+//									newItem.purchase_order_date = amendments.get(0).purchase_order_date;
+// 									newItem.receive_date = amendments.get(0).latest_receive_date;
+ 									System.out.println("testing ********************* newItem.receive_date **** i ***** insert" + newItem.receive_date);
+ 									
+ 									//create history records to receive_history table
+ 									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
+									reviHist.item_no = newItem.item_no;
+									reviHist.purchase_order_no = newItem.purchase_order_no;
+									reviHist.received_date = amendments.get(0).latest_receive_date;
+									reviHist.received_quantity = newItem.received_quantity;
+									reviHist.back_order_quantity = newItem.back_order_quantity;
+									ItemReceiveHistoryDao.insertItem(reviHist);
+ 									// TODO Auto-generated method stub
+									return false;
+								}
+
+								@Override
+								public boolean update(
+										ARCmItemInventory oldItem,
+										ARCmItemInventory newItem,
+										ACFdSQLAssUpdate ass) throws Exception {
+									ass.columns.put("purchase_order_date", amendments.get(0).purchase_order_date);
+									ass.columns.put("receive_date", amendments.get(0).latest_receive_date);
+									//if the item belongs to 'report in category'
+									
+									//update history records to receive_history table
+ 									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
+									reviHist.item_no = newItem.item_no;
+									reviHist.purchase_order_no = newItem.purchase_order_no;
+									reviHist.received_date = amendments.get(0).latest_receive_date;
+									reviHist.received_quantity = newItem.received_quantity;
+									reviHist.back_order_quantity = newItem.back_order_quantity;
+									ItemReceiveHistoryDao.updateItem(reviHist);
+									
+									return false;
+								}
+
+ 								@Override
+ 								public boolean delete(
+ 										ARCmItemInventory oldItem,
+ 										ACFdSQLAssDelete ass) throws Exception {
+ 									// TODO Auto-generated method stub
+ 									return false;
+ 								}});
                         
                       
                     }

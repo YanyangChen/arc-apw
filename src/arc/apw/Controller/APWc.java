@@ -123,7 +123,7 @@ public class APWc extends ACFaAppController {
     @ResponseBody
     public ACFgResponseParameters getIteminv(@RequestBody ACFgRequestParameters param) throws Exception {
         setAuditKey("item_no", param.get("item_no", String.class));
-         getResponseParameters().put("item",         InventoryService.getItemUnits((param.get("item_no", String.class))));
+         getResponseParameters().put("item",         InventoryService.getMinItemUnits((param.get("item_no", String.class))));
         return getResponseParameters();
     }
     

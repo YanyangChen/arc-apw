@@ -498,31 +498,7 @@
 							});
 				
 				
-				$.ajax({ //grid combobox and multi-value input
-								headers: {
-									'Accept'       : 'application/json',
-									'Content-Type' : 'application/json; charset=utf-8'
-								},
-								async  : false,
-								type   : "POST",
-								url    : "${ctx}/arc/apw/apw-item-mas.ajax",
-								data   : JSON.stringify({
-									'item_no'	: input.newValue
-								}),
-								success: function(data) {
-									//console.log(data.item);
-									//console.log(data.item[0].un_it);
-									if (data.item != null) {
-										//$("#frm_main #supplier_desc").setValue(data.sup_desc);
-										//console.log(data.item[0].unit_cost);
-// 										$("#item_browse").setRowData(id, {item_description_1: data.item[0].item_description_1});
-										
-									}
-									else {
-										//$("#frm_main #supplier_desc").setValue("");
-									}
-								}
-							});
+			
 							//}
 				</script>
 				</acf:Bind>
@@ -789,9 +765,12 @@ $("#frm_main #input_date").setValue(today);
 
 $(document).on("amend", function() {
 
-$('#labour_browse').setGridParam({getMode : func});
-$('#item_browse').setGridParam({getMode : func});
-$('#material_browse').setGridParam({getMode : func});
+$('#labour_browse').setGridParam({editable : false});
+$('#item_browse').setGridParam({editable : false});
+$('#material_browse').setGridParam({editable : false});
+$('#labour_browse').setGridParam({addable : false});
+$('#item_browse').setGridParam({addable : false});
+$('#material_browse').setGridParam({addable : false});
 
 if ($("#frm_main #cancel_indicator").getValue() == 'y')
 {

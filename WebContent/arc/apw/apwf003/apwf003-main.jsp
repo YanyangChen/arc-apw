@@ -361,7 +361,7 @@
 // 									console.log(item_no);
 // 									console.log(data.item);
 // 									console.log(data.item[0].un_it);
-									if (data.item != null) {
+									if (data.item.length != 0) {
 										//$("#frm_main #supplier_desc").setValue(data.sup_desc);
 										//console.log(data.item.un_it);
 										$("#grid_item").setRowData(id, {un_it: data.item[0].un_it, unit_cost: data.item[0].unit_cost, item_description_1: data.item[0].item_description_1});
