@@ -221,15 +221,7 @@ public class APWc004 extends ACFaAppController {
                     	 									newItem.purchase_order_date = ACFtUtility.now();
                     	  									newItem.receive_date = ACFtUtility.now();
                     	 								System.out.println("testing ********************* newItem.receive_date **** i ***** insert" +  newItem.receive_date);
-                    	 									
-                    	 								//create history records to receive_history table
-                     									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
-                    									reviHist.item_no = newItem.item_no;
-                    									reviHist.purchase_order_no = newItem.purchase_order_no;
-                    									reviHist.received_date = amendments.get(0).latest_receive_date;
-                    									reviHist.received_quantity = newItem.received_quantity;
-                    									reviHist.back_order_quantity = newItem.back_order_quantity;
-                    									ItemReceiveHistoryDao.insertItem(reviHist);
+                    	 										
                    	  									// TODO Auto-generated method stub
                     	 									return false;
                     	 								}
@@ -244,13 +236,7 @@ public class APWc004 extends ACFaAppController {
                     	 									System.out.println("testing ********************* newItem.receive_date **** i ***** update" + newItem.receive_date);
                     	 									// TODO Auto-generated method stub
                     	 									//update history records to receive_history table
-                    	 									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
-                    										reviHist.item_no = newItem.item_no;
-                    										reviHist.purchase_order_no = newItem.purchase_order_no;
-                    										reviHist.received_date = amendments.get(0).latest_receive_date;
-                    										reviHist.received_quantity = newItem.received_quantity;
-                    										reviHist.back_order_quantity = newItem.back_order_quantity;
-                    										ItemReceiveHistoryDao.updateItem(reviHist);
+                    	 									
                     	 									return false;
                     	 								}
                     	 
@@ -281,19 +267,12 @@ public class APWc004 extends ACFaAppController {
 										ARCmItemInventory newItem,
 										ACFdSQLAssInsert ass) throws Exception {
  									ass.columns.put("purchase_order_date", amendments.get(0).purchase_order_date);
-									ass.columns.put("receive_date", amendments.get(0).latest_receive_date);
+									ass.columns.put("receive_date", amendments.get(1).latest_receive_date);
 //									newItem.purchase_order_date = amendments.get(0).purchase_order_date;
-// 									newItem.receive_date = amendments.get(0).latest_receive_date;
+// 									newItem.receive_date = amendments.get(1).latest_receive_date;
  									System.out.println("testing ********************* newItem.receive_date **** i ***** insert" + newItem.receive_date);
  									
- 									//create history records to receive_history table
- 									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
-									reviHist.item_no = newItem.item_no;
-									reviHist.purchase_order_no = newItem.purchase_order_no;
-									reviHist.received_date = amendments.get(0).latest_receive_date;
-									reviHist.received_quantity = newItem.received_quantity;
-									reviHist.back_order_quantity = newItem.back_order_quantity;
-									ItemReceiveHistoryDao.insertItem(reviHist);
+ 									
  									// TODO Auto-generated method stub
 									return false;
 								}
@@ -304,17 +283,17 @@ public class APWc004 extends ACFaAppController {
 										ARCmItemInventory newItem,
 										ACFdSQLAssUpdate ass) throws Exception {
 									ass.columns.put("purchase_order_date", amendments.get(0).purchase_order_date);
-									ass.columns.put("receive_date", amendments.get(0).latest_receive_date);
+									ass.columns.put("receive_date", amendments.get(1).latest_receive_date);
 									//if the item belongs to 'report in category'
 									
-									//update history records to receive_history table
+									//create history records to receive_history table
  									ARCmItemReceiveHistory reviHist = new ARCmItemReceiveHistory();
 									reviHist.item_no = newItem.item_no;
 									reviHist.purchase_order_no = newItem.purchase_order_no;
-									reviHist.received_date = amendments.get(0).latest_receive_date;
-									reviHist.received_quantity = newItem.received_quantity;
-									reviHist.back_order_quantity = newItem.back_order_quantity;
-									ItemReceiveHistoryDao.updateItem(reviHist);
+									reviHist.received_date = amendments.get(1).latest_receive_date;
+									reviHist.received_quantity = new BigDecimal(newItem.received_quantity.intValue() - oldItem.received_quantity.intValue());
+									reviHist.back_order_quantity = new BigDecimal(newItem.back_order_quantity.intValue() - oldItem.back_order_quantity.intValue());
+									ItemReceiveHistoryDao.insertItem(reviHist);
 									
 									return false;
 								}

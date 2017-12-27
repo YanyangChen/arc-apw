@@ -729,6 +729,7 @@ $("#grid_item").pGrid$copyRecord();
 $("#frm_main #printed_by").setValue("");
 $("#frm_main #printed_at").setValue("");
 $("#frm_main #no_of_times_printed").setValue(0);
+$("#frm_main #latest_receive_date").setValue(moment("1900-01-01"));
 });
 
 function calculatePaymentAmount(){

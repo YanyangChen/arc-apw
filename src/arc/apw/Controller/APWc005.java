@@ -335,7 +335,7 @@ public class APWc005 extends ACFaAppController {
  												if(cq <=APWc006.get_remaining(mininv))
  												{
  													ass.columns.put("consumption_quantity", new BigDecimal(cq));
- 													
+ 													ass.columns.put("purchase_order_no", mininv.purchase_order_no);
  	 												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);
  	 						            			cq = 0;
  	 						            			ItemInventoryDao.updateItem(mininv);
@@ -436,7 +436,7 @@ public class APWc005 extends ACFaAppController {
  												if(cq <=APWc006.get_remaining(mininv))
  												{
  													ass.columns.put("consumption_quantity", new BigDecimal(cq));
- 													
+ 													ass.columns.put("purchase_order_no", mininv.purchase_order_no);
  												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);
  						            			cq = 0;
  						            			ItemInventoryDao.updateItem(mininv);
@@ -564,7 +564,7 @@ public class APWc005 extends ACFaAppController {
  											List<ARCmItemInventory> ls = ItemInventoryDao.selectItems(newItem.item_no);
  											
  											System.out.println("------testing item list---------------");
- 											int rqs = 0;
+ 											int rqs = 0; //remaining quantity summation
  											for (ARCmItemInventory II : ls)
  											{
  												System.out.println(II);
@@ -591,6 +591,8 @@ public class APWc005 extends ACFaAppController {
  												
  												if(cq <=APWc006.get_remaining(mininv))
  												{
+ 													ass.columns.put("consumption_quantity", new BigDecimal(cq));
+ 													ass.columns.put("purchase_order_no", mininv.purchase_order_no);
  												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);
  						            			cq = 0;
  						            			ItemInventoryDao.updateItem(mininv);
@@ -678,6 +680,8 @@ public class APWc005 extends ACFaAppController {
  				 												
  				 												if(cq2 <=APWc006.get_remaining(mininv))
  				 												{
+ 				 													ass.columns.put("consumption_quantity", new BigDecimal(cq));
+ 				 													ass.columns.put("purchase_order_no", mininv.purchase_order_no);
  				 												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq2);
  				 						            			cq2 = 0;
  				 						            			ItemInventoryDao.updateItem(mininv);
@@ -744,6 +748,8 @@ public class APWc005 extends ACFaAppController {
  												
  												if(cq <=APWc006.get_remaining(mininv))
  												{
+ 													ass.columns.put("consumption_quantity", new BigDecimal(cq));
+	 												ass.columns.put("purchase_order_no", mininv.purchase_order_no);
  												mininv.consumed_quantity = new BigDecimal(mininv.consumed_quantity.intValue() + cq);
  						            			cq = 0;
  						            			ItemInventoryDao.updateItem(mininv);
